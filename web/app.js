@@ -61,7 +61,7 @@
 
   window.App = {
     openDetail(id){
-      const rec=(window.__APPDATA__[state.key]||[]).find(r=>r.id===id);
+      const rec=((window.__APPDATA__||{})[state.key]||[]).find(r=>r.id===id);
       if(!rec) return;
       state.current=rec;
       const el=document.getElementById('detail');

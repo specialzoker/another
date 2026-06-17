@@ -18,14 +18,15 @@ window.Render = (function(){
   function summaryCard(r){
     const g=r.grades||{}; const c=r.count||{};
     const kpi=(label,val)=>`<div class="kpi"><span>${label}</span><strong>${val==null?'-':val}</strong></div>`;
+    const gr=(v)=>v==null?null:Number(v).toFixed(2);
     return `<div class="card">
       <h2>${recordTitle(r)}</h2>
       <div class="kpis">
         ${kpi('사례수', `${c.applied} <small style="font-size:13px;color:#64748b">[${c.accepted}]</small>`)}
         ${kpi('합격률', `${Math.round((r.rate||0)*100)}%`)}
-        ${kpi('내신 최고', g.best)}
-        ${kpi('내신 평균', g.avg)}
-        ${kpi('내신 최저', g.worst)}
+        ${kpi('내신 최고', gr(g.best))}
+        ${kpi('내신 평균', gr(g.avg))}
+        ${kpi('내신 최저', gr(g.worst))}
       </div>
     </div>`;
   }
@@ -45,7 +46,7 @@ window.Render = (function(){
         <table><thead><tr>
           <th>지망</th><th>대학 · 전형</th><th style="text-align:right">지원</th>
           <th style="text-align:right">합격</th><th>합격률</th><th></th>
-        </tr></thead><tbody>${rows||'<tr><td>데이터 없음</td></tr>'}</tbody></table>
+        </tr></thead><tbody>${rows||'<tr><td colspan="6">데이터 없음</td></tr>'}</tbody></table>
       </div>
     </div>`;
   }

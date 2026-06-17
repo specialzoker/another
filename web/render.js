@@ -50,5 +50,45 @@ window.Render = (function(){
       </div>
     </div>`;
   }
-  return {esc, ratePill, bar, recordTitle, summaryCard, prefTable};
+  function hubSpoke(rec){
+    const prefs=(rec.preferences||[]).slice(0,8);
+    const W=720,H=360,cx=W/2,cy=H/2;
+    const maxApplied=Math.max(1,...prefs.map(p=>p.applied));
+    let edges='',nodes='';
+    prefs.forEach((p,i)=>{
+      const ang=(-Math.PI/2)+(i*2*Math.PI/prefs.length);
+      const x=cx+Math.cos(ang)*240, y=cy+Math.sin(ang)*140;
+      const w=1+ (p.applied/maxApplied)*9;
+      edges+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#93c5fd" stroke-width="${w.toFixed(1)}" stroke-opacity="0.8"/>`;
+      nodes+=`<g><circle cx="${x}" cy="${y}" r="30" fill="#eff6ff" stroke="#1d4ed8"/>
+        <text x="${x}" y="${y-2}" text-anchor="middle" font-size="11" font-weight="700" fill="#0f3b75">${esc(p.university)}</text>
+        <text x="${x}" y="${y+13}" text-anchor="middle" font-size="10" fill="#475569">${p.applied}명</text></g>`;
+    });
+    return `<div class="card"><h2>교차지원 흐름도</h2>
+      <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-height:380px">
+        ${edges}
+        <circle cx="${cx}" cy="${cy}" r="42" fill="#1d4ed8"/>
+        <text x="${cx}" y="${cy-3}" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">${esc(rec.university)}</text>
+        <text x="${cx}" y="${cy+14}" text-anchor="middle" font-size="10" fill="#dbeafe">${esc(rec.name).slice(0,8)}</text>
+        ${nodes}
+      </svg></div>`;
+  }
+  function bidirectional(rec, pref, target){
+    const aToB = rec.count.applied? pref.applied/rec.count.applied : 0;
+    let revText='<span class="pill muted">역방향 데이터 없음</span>';
+    if(target){
+      const back=(target.preferences||[]).find(p=>p.matchedId===rec.id);
+      const bToA = (back && target.count.applied)? back.applied/target.count.applied : 0;
+      revText = back
+        ? `${esc(target.university)} 지원자 중 <b>${Math.round(bToA*100)}%</b>가 ${esc(rec.university)}에도 지원`
+        : revText;
+    }
+    return `<div class="card"><h2>양방향 비교</h2>
+      <p>${esc(rec.university)} ${esc(rec.name)} 지원자 중 <b>${Math.round(aToB*100)}%</b>가
+         ${esc(pref.university)} ${esc(pref.label)}에도 지원</p>
+      ${bar(aToB)}
+      <p style="margin-top:14px">${revText}</p>
+    </div>`;
+  }
+  return {esc, ratePill, bar, recordTitle, summaryCard, prefTable, hubSpoke, bidirectional};
 })();

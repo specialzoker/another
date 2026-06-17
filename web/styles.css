@@ -2,10 +2,12 @@
 *{box-sizing:border-box}
 body{margin:0;background:linear-gradient(180deg,#f8fbff 0%,#eef4fb 100%);font-family:Pretendard,'Noto Sans KR',Arial,sans-serif;color:var(--text)}
 header{background:linear-gradient(135deg,#fff 0%,#f4f8ff 52%,#eaf2ff 100%);padding:20px 28px;border-bottom:1px solid #d6e2f2;box-shadow:0 10px 30px rgba(15,23,42,.08)}
-.brandbar{display:flex;align-items:center;gap:24px;max-width:1280px;margin:0 auto}
+.brandbar{display:flex;align-items:center;gap:24px;max-width:1280px;margin:0 auto;flex-wrap:wrap}
 .brandText h1{margin:0 0 4px;font-size:30px;letter-spacing:-1px;color:#06234a}
 .brandText p{margin:0;color:#31527a;font-weight:700}
-.topBadge{margin-left:auto;background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 16px;color:#0f3b75;font-weight:800;box-shadow:0 6px 20px rgba(15,23,42,.06)}
+.headerRight{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.topBadge{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 16px;color:#0f3b75;font-weight:800;box-shadow:0 6px 20px rgba(15,23,42,.06)}
+.credit{font-size:12px;color:#5b7299;font-weight:700}
 main{max-width:1280px;margin:20px auto;padding:0 16px}
 .card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 12px 30px rgba(15,23,42,.07);margin-bottom:18px}
 .card h2{margin:0 0 12px;font-size:19px}

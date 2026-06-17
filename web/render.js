@@ -69,7 +69,7 @@ window.Render = (function(){
         ${edges}
         <circle cx="${cx}" cy="${cy}" r="42" fill="#1d4ed8"/>
         <text x="${cx}" y="${cy-3}" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">${esc(rec.university)}</text>
-        <text x="${cx}" y="${cy+14}" text-anchor="middle" font-size="10" fill="#dbeafe">${esc(rec.name).slice(0,8)}</text>
+        <text x="${cx}" y="${cy+14}" text-anchor="middle" font-size="10" fill="#dbeafe">${esc((rec.name||'').slice(0,8))}</text>
         ${nodes}
       </svg></div>`;
   }
@@ -85,7 +85,7 @@ window.Render = (function(){
     }
     return `<div class="card"><h2>양방향 비교</h2>
       <p>${esc(rec.university)} ${esc(rec.name)} 지원자 중 <b>${Math.round(aToB*100)}%</b>가
-         ${esc(pref.university)} ${esc(pref.label)}에도 지원</p>
+         ${esc(pref.university)}${pref.label?' '+esc(pref.label):''}에도 지원</p>
       ${bar(aToB)}
       <p style="margin-top:14px">${revText}</p>
     </div>`;

@@ -78,11 +78,13 @@
         ? ((window.__APPDATA__||{})[state.key]||[]).find(r=>r.id===pref.matchedId)
         : null;
       const el=document.getElementById('detail');
+      el.querySelectorAll('.drillCard').forEach(d=>d.remove());
       const drill=document.createElement('div');
+      drill.className='drillCard';
       drill.innerHTML =
         `<div class="card" style="background:#f8fbff">
            <div class="btns"><button class="ghost" id="closeDrill">← 순위표로</button></div>
-           <h2 style="margin:0">드릴인: ${Render.esc(rec.university)} ${Render.esc(rec.name)} → ${Render.esc(pref.university)} ${Render.esc(pref.label)}</h2>
+           <h2 style="margin:0">드릴인: ${Render.esc(rec.university)} ${Render.esc(rec.name)} → ${Render.esc(pref.university)}${pref.label?' '+Render.esc(pref.label):''}</h2>
          </div>` +
         Render.hubSpoke(rec) +
         Render.bidirectional(rec, pref, target);

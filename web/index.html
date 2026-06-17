@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2026 지원경향 분석</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <div class="brandbar">
+    <div class="brandText">
+      <h1>2026 지원경향 분석</h1>
+      <p>작년 교차지원 · 합격 경향 조회</p>
+    </div>
+    <div class="topBadge" id="reportBadge">로딩…</div>
+  </div>
+</header>
+<main>
+  <div class="tabs" id="sheetTabs"></div>
+  <div class="card" id="searchCard">
+    <div class="form-grid-2">
+      <div>
+        <label>검색 (대학·전형·학과)</label>
+        <input id="q" placeholder="예: 서울대 지역균형">
+      </div>
+      <div>
+        <label>지역</label>
+        <select id="regionFilter"><option value="">전체</option></select>
+      </div>
+    </div>
+    <div class="scroll" style="max-height:340px;margin-top:12px">
+      <table><tbody id="resultBody"></tbody></table>
+    </div>
+  </div>
+  <div id="detail"></div>
+</main>
+<script src="data/index.js"></script>
+<script src="render.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

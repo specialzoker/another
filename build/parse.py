@@ -155,6 +155,7 @@ def parse_sheet(sheet_name, rows):
     pref_cols = [i for i, h in enumerate(header) if re.match(r"^\d+지망$", h)]
 
     records, skipped = [], 0
+    seen_ids = {}
     for row in rows[1:]:
         if cell(row, c_univ) in (None, ""):
             continue
@@ -176,8 +177,13 @@ def parse_sheet(sheet_name, rows):
         id_parts = [_sheet_key(sheet_name), university, type_, name]
         if unit:
             id_parts.append(unit)
+        rid = ":".join(id_parts)
+        n_seen = seen_ids.get(rid, 0) + 1
+        seen_ids[rid] = n_seen
+        if n_seen > 1:
+            rid = f"{rid}#{n_seen}"
         records.append({
-            "id": ":".join(id_parts),
+            "id": rid,
             "sheet": sheet_name,
             "region": region,
             "university": university,

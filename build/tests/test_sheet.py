@@ -53,3 +53,18 @@ def test_short_row_does_not_crash():
     assert len(recs) == 1
     assert recs[0]["grades"]["best"] is None
     assert recs[0]["preferences"] == []
+
+def test_duplicate_ids_are_disambiguated():
+    header = ["지역","대학명","전형유형","전형명","사례수","최고","평균","중간","최저","1 지망"]
+    r1 = ["경남","경상국립대","학생부교과","일반","3 [0]",1.13,1.2,1.2,1.3,""]
+    r2 = ["경남","경상국립대","학생부교과","일반","19 [7]",1.34,1.5,1.5,1.7,""]
+    r3 = ["경남","경상국립대","학생부교과","일반","31 [11]",3.47,3.8,3.8,4.0,""]
+    recs, _ = parse_sheet("전형", [header, r1, r2, r3])
+    ids = [r["id"] for r in recs]
+    assert len(set(ids)) == 3                       # 전부 유일
+    assert ids[0] == "전형:경상국립대:학생부교과:일반"   # 첫 행은 깨끗한 id 유지
+    assert ids[1] == "전형:경상국립대:학생부교과:일반#2"
+    assert ids[2] == "전형:경상국립대:학생부교과:일반#3"
+    # count/grades 는 각 행 고유값 유지
+    assert recs[0]["count"]["applied"] == 3
+    assert recs[1]["count"]["applied"] == 19

@@ -32,3 +32,8 @@ def test_empty_or_malformed_returns_none():
     assert parse_pref_cell(None) is None
     assert parse_pref_cell("") is None
     assert parse_pref_cell("그냥텍스트_x000D_\n없음") is None
+
+def test_strip_parens_requires_matched_brackets():
+    # mismatched brackets must NOT be stripped
+    cell = "서울대_x000D_\n(면접]_x000D_\n1[0]"
+    assert parse_pref_cell(cell)["label"] == "(면접]"

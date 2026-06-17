@@ -39,8 +39,9 @@ def parse_pref_cell(cell):
 
 
 def _strip_parens(s):
-    """앞뒤 괄호류 제거: (일반)->일반, [면접]->면접. 내부는 보존."""
+    """앞뒤 괄호류 제거: (일반)->일반, [면접]->면접. 짝이 맞을 때만. 내부는 보존."""
     s = s.strip()
-    if len(s) >= 2 and s[0] in "([" and s[-1] in ")]":
+    pairs = {"(": ")", "[": "]"}
+    if len(s) >= 2 and s[0] in pairs and s[-1] == pairs[s[0]]:
         return s[1:-1].strip()
     return s

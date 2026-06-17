@@ -1,4 +1,5 @@
+# web/data/ 는 GitHub Pages 배포에 필요하므로 커밋에 포함합니다.
+# (자료 갱신 시 python build/build.py 로 재생성)
 __pycache__/
 *.pyc
 .pytest_cache/
-web/data/

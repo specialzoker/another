@@ -36,3 +36,20 @@ def test_hakgwa_sheet_has_unit():
     assert recs[0]["unit"] == "의학부(의예)"
     assert recs[0]["id"] == "학과:중앙대:종합:CAU융합형인재:의학부(의예)"
     assert recs[0]["preferences"][0]["label"] == "지역균형 · 의예과"
+
+
+def test_bad_case_count_is_skipped():
+    header = ["지역","대학명","전형유형","전형명","사례수","최고","평균","중간","최저","1 지망"]
+    good = ["서울","연세대","교과","추천형","3 [1]",1.0,1.1,1.1,1.2,""]
+    bad  = ["서울","고려대","교과","학교추천","비어있음",1.0,1.1,1.1,1.2,""]
+    recs, skipped = parse_sheet("전형", [header, good, bad])
+    assert len(recs) == 1
+    assert skipped == 1
+
+def test_short_row_does_not_crash():
+    header = ["지역","대학명","전형유형","전형명","사례수","최고","평균","중간","최저","1 지망"]
+    short = ["서울","서강대","교과","지역균형","2 [0]"]  # 등급·지망 칸 없음(짧은 행)
+    recs, _ = parse_sheet("전형", [header, short])
+    assert len(recs) == 1
+    assert recs[0]["grades"]["best"] is None
+    assert recs[0]["preferences"] == []

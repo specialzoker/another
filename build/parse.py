@@ -107,7 +107,7 @@ def _parse_count(val):
     """'94 [33]' → (94, 33). 실패 시 (None, None)."""
     if val is None:
         return None, None
-    m = re.match(r"^\s*(\d+)\s*\[\s*(\d+)\s*\]\s*$", str(val))
+    m = _COUNT_RE.match(str(val))
     if not m:
         return None, None
     return int(m.group(1)), int(m.group(2))
@@ -134,6 +134,12 @@ def parse_sheet(sheet_name, rows):
                 return header.index(nm)
         return None
 
+    def cell(row, ci):
+        """안전 접근: 컬럼 없거나 행이 짧으면 None."""
+        if ci is None or ci >= len(row):
+            return None
+        return row[ci]
+
     c_region = col("지역")
     c_univ = col("대학명", "대명")
     c_type = col("전형유형")
@@ -144,28 +150,29 @@ def parse_sheet(sheet_name, rows):
     c_avg = col("평균")
     c_median = col("중간", "중간값")
     # '최저'는 등급(첫 등장)과 표 끝 머리글에 중복 → 사례수 직후의 첫 '최저' 사용
-    c_worst = next((i for i, h in enumerate(header) if h == "최저" and i > c_count), None)
+    _count_idx = c_count if c_count is not None else -1
+    c_worst = next((i for i, h in enumerate(header) if h == "최저" and i > _count_idx), None)
     pref_cols = [i for i, h in enumerate(header) if re.match(r"^\d+지망$", h)]
 
     records, skipped = [], 0
     for row in rows[1:]:
-        if c_univ is None or row[c_univ] in (None, ""):
+        if cell(row, c_univ) in (None, ""):
             continue
-        applied, accepted = _parse_count(row[c_count])
+        applied, accepted = _parse_count(cell(row, c_count))
         if applied is None:
             skipped += 1
             continue
-        unit = str(row[c_unit]).strip() if c_unit is not None and row[c_unit] else None
+        _u = cell(row, c_unit); unit = str(_u).strip() if _u else None
         prefs = []
         for rank, ci in enumerate(pref_cols, start=1):
-            parsed = parse_pref_cell(row[ci]) if ci < len(row) else None
+            parsed = parse_pref_cell(cell(row, ci))
             if parsed:
                 parsed["rank"] = rank
                 prefs.append(parsed)
-        region = str(row[c_region]).strip() if row[c_region] else ""
-        university = str(row[c_univ]).strip()
-        type_ = str(row[c_type]).strip() if row[c_type] else ""
-        name = str(row[c_name]).strip() if row[c_name] else ""
+        _rg = cell(row, c_region); region = str(_rg).strip() if _rg else ""
+        university = str(cell(row, c_univ)).strip()
+        _tp = cell(row, c_type); type_ = str(_tp).strip() if _tp else ""
+        _nm = cell(row, c_name); name = str(_nm).strip() if _nm else ""
         id_parts = [_sheet_key(sheet_name), university, type_, name]
         if unit:
             id_parts.append(unit)
@@ -179,10 +186,10 @@ def parse_sheet(sheet_name, rows):
             "unit": unit,
             "count": {"applied": applied, "accepted": accepted},
             "grades": {
-                "best": _to_float(row[c_best]) if c_best is not None else None,
-                "avg": _to_float(row[c_avg]) if c_avg is not None else None,
-                "median": _to_float(row[c_median]) if c_median is not None else None,
-                "worst": _to_float(row[c_worst]) if c_worst is not None else None,
+                "best": _to_float(cell(row, c_best)),
+                "avg": _to_float(cell(row, c_avg)),
+                "median": _to_float(cell(row, c_median)),
+                "worst": _to_float(cell(row, c_worst)),
             },
             "preferences": prefs,
         })

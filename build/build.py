@@ -32,6 +32,8 @@ def write_js(path, text):
 
 
 def main():
+    if not os.path.exists(XLSX):
+        sys.exit(f"ERROR: 엑셀 파일을 찾을 수 없습니다:\n  {XLSX}")
     os.makedirs(OUT_DIR, exist_ok=True)
     wb = openpyxl.load_workbook(XLSX, data_only=True)
     report = {"sheets": {}}

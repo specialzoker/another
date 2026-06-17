@@ -9,7 +9,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import openpyxl
-from build.parse import parse_sheet, build_match_index, find_match
+from build.parse import parse_sheet, build_match_index, find_match, merge_records
 
 XLSX = r"C:\클라우드파일\다운 받은 파일\2026\2026 지원경향분석_전형_학과.xlsx"
 OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "web", "data")
@@ -46,6 +46,7 @@ def main():
         h = next((i for i, r in enumerate(rows)
                   if any(str(c).replace(" ", "") == "사례수" for c in r if c)), 0)
         records, skipped = parse_sheet(sheet_name, rows[h:])
+        records = merge_records(records)
 
         idx = build_match_index(records)
         matched = total = 0

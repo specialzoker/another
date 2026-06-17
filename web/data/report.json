@@ -1,31 +1,31 @@
 {
   "sheets": {
     "jeonhyeong": {
-      "records": 1900,
+      "records": 1612,
       "skipped": 0,
-      "prefs": 16581,
-      "matched": 16148,
+      "prefs": 16082,
+      "matched": 15665,
       "match_rate": 0.974
     },
     "jeonhyeong_inmun": {
-      "records": 961,
+      "records": 896,
       "skipped": 0,
-      "prefs": 7891,
-      "matched": 7029,
-      "match_rate": 0.891
+      "prefs": 7814,
+      "matched": 6956,
+      "match_rate": 0.89
     },
     "jeonhyeong_jayeon": {
-      "records": 1274,
+      "records": 1064,
       "skipped": 0,
-      "prefs": 10997,
-      "matched": 9215,
+      "prefs": 10736,
+      "matched": 9002,
       "match_rate": 0.838
     },
     "hakgwa": {
-      "records": 13495,
+      "records": 13476,
       "skipped": 0,
-      "prefs": 101011,
-      "matched": 91721,
+      "prefs": 100983,
+      "matched": 91694,
       "match_rate": 0.908
     }
   }

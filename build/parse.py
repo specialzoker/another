@@ -1,4 +1,5 @@
 import re
+import copy
 
 _COUNT_RE = re.compile(r"^\s*(\d+)\s*\[\s*(\d+)\s*\]\s*$")
 
@@ -247,7 +248,7 @@ def merge_records(records):
     for bid in order:
         grp = groups[bid]
         if len(grp) == 1:
-            r = dict(grp[0])
+            r = copy.deepcopy(grp[0])
             r["id"] = bid
             merged.append(r)
             continue
@@ -263,7 +264,7 @@ def merge_records(records):
         porder = []
         for r in grp:
             for p in r["preferences"]:
-                k = normalize_university(p["university"]) + "|" + normalize_name(p["label"])
+                k = match_key(p["university"], p["label"])
                 if k not in agg:
                     agg[k] = {"university": p["university"], "label": p["label"],
                               "applied": 0, "accepted": 0}

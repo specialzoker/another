@@ -60,7 +60,18 @@
   }
 
   window.App = {
-    openDetail(id){ console.log('openDetail', id); },
+    openDetail(id){
+      const rec=(window.__APPDATA__[state.key]||[]).find(r=>r.id===id);
+      if(!rec) return;
+      state.current=rec;
+      const el=document.getElementById('detail');
+      el.innerHTML = Render.summaryCard(rec) + Render.prefTable(rec);
+      el.scrollIntoView({behavior:'smooth'});
+      el.querySelectorAll('tbody tr.clickable').forEach(tr=>{
+        tr.ondblclick=()=>window.App.openDrill(rec, parseInt(tr.dataset.rank,10));
+      });
+    },
+    openDrill(rec, rank){ console.log('drill', rec.id, rank); },
     state, loadData, indexFor,
   };
 

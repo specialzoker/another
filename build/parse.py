@@ -45,3 +45,59 @@ def _strip_parens(s):
     if len(s) >= 2 and s[0] in pairs and s[-1] == pairs[s[0]]:
         return s[1:-1].strip()
     return s
+
+
+_CAMPUS_SUFFIXES = ("칠암", "김해", "광주", "경산", "아산", "포항", "대구", "서울", "원주")
+
+
+def normalize_name(s):
+    """매칭용 정규화: 공백·괄호류·'전형' 접미·캠퍼스 접미 제거."""
+    if not s:
+        return ""
+    s = s.strip()
+    s = re.sub(r"[()\[\]]", "", s)          # 괄호류 제거
+    while s.endswith("전형"):                # 끝의 '전형' 접미 제거(반복)
+        s = s[:-2]
+    s = s.replace(" ", "")
+    for suf in _CAMPUS_SUFFIXES:            # 캠퍼스 접미 제거
+        if len(s) > len(suf) + 1 and s.endswith(suf):
+            s = s[: -len(suf)]
+            break
+    return s
+
+
+def normalize_university(s):
+    """대학명 정규화(= normalize_name; 캠퍼스 접미 포함)."""
+    return normalize_name(s)
+
+
+def match_key(university, name):
+    return f"{normalize_university(university)}|{normalize_name(name)}"
+
+
+def build_match_index(records):
+    """원본 records → {정규화대학: [(정규화전형명, id)]} 인덱스."""
+    idx = {}
+    for r in records:
+        u = normalize_university(r["university"])
+        n = normalize_name(r.get("name") or "")
+        idx.setdefault(u, []).append((n, r["id"]))
+    return idx
+
+
+def find_match(idx, university, label):
+    """지망 (대학,라벨) → 원본 id (best-effort). 실패 시 None.
+    - 같은 대학 후보 중 정규화 라벨이 완전일치 우선, 없으면 부분일치(포함관계).
+    """
+    u = normalize_university(university)
+    target = normalize_name(label)
+    cands = idx.get(u)
+    if not cands or not target:
+        return None
+    for n, rid in cands:          # 1) 완전일치
+        if n == target:
+            return rid
+    for n, rid in cands:          # 2) 부분일치
+        if n and (target in n or n in target):
+            return rid
+    return None

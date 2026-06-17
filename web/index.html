@@ -23,16 +23,19 @@
   <div class="card" id="searchCard">
     <div class="form-grid-2">
       <div>
-        <label>검색 (대학·전형·학과)</label>
-        <input id="q" placeholder="예: 서울대 지역균형">
+        <label for="q">검색 (대학·전형·학과)</label>
+        <input id="q" type="search" placeholder="예: 서울대 지역균형">
       </div>
       <div>
-        <label>지역</label>
+        <label for="regionFilter">지역</label>
         <select id="regionFilter"><option value="">전체</option></select>
       </div>
     </div>
     <div class="scroll" style="max-height:340px;margin-top:12px">
-      <table><tbody id="resultBody"></tbody></table>
+      <table>
+        <thead><tr><th style="width:70px">지역</th><th style="width:140px">대학</th><th>전형 · 학과</th></tr></thead>
+        <tbody id="resultBody"></tbody>
+      </table>
     </div>
   </div>
   <div id="detail"></div>

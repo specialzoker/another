@@ -5,7 +5,7 @@
     {key:'jeonhyeong_jayeon', label:'전형·자연'},
     {key:'hakgwa', label:'학과'},
   ];
-  const state = {key:'jeonhyeong', loaded:{}};
+  const state = {key:'jeonhyeong'};
 
   function loadData(key){
     return new Promise((resolve)=>{
@@ -23,7 +23,7 @@
   function renderTabs(){
     const el=document.getElementById('sheetTabs');
     el.innerHTML=KEYS.map(k=>
-      `<button class="tab ${k.key===state.key?'active':''}" data-key="${k.key}">${k.label}</button>`
+      `<button class="tab ${k.key===state.key?'active':''}" data-key="${Render.esc(k.key)}">${Render.esc(k.label)}</button>`
     ).join('');
     el.querySelectorAll('.tab').forEach(b=>b.onclick=async()=>{
       state.key=b.dataset.key; renderTabs(); fillRegions();
@@ -35,7 +35,7 @@
   function fillRegions(){
     const regions=[...new Set(indexFor(state.key).map(x=>x.region).filter(Boolean))].sort();
     document.getElementById('regionFilter').innerHTML =
-      '<option value="">전체</option>'+regions.map(r=>`<option>${r}</option>`).join('');
+      '<option value="">전체</option>'+regions.map(r=>`<option value="${Render.esc(r)}">${Render.esc(r)}</option>`).join('');
   }
 
   function runSearch(){

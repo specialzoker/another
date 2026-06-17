@@ -3,7 +3,7 @@ window.Render = (function(){
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
   function ratePill(rate, applied){
     if(!applied) return '<span class="pill muted">-</span>';
-    const pct=Math.round(rate*100);
+    const pct=Math.round((rate||0)*100);
     const cls = pct>=60?'good':pct>=30?'ok':pct>0?'warn':'bad';
     return `<span class="pill ${cls}">${pct}%</span>`;
   }

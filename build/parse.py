@@ -206,3 +206,90 @@ def _sheet_key(sheet_name):
     return {
         "전형": "전형", "전형_인문": "전형", "전형_자연": "전형", "학과": "학과",
     }.get(sheet_name, sheet_name)
+
+
+def _base_id(rid):
+    """레코드 id 끝의 '#숫자' 접미 제거 → 병합 그룹 키."""
+    return re.sub(r"#\d+$", "", rid)
+
+
+def _weighted_avg(pairs):
+    """pairs: [(value, weight)]. value None 은 제외. 전부 None 이면 None."""
+    num = 0.0
+    den = 0
+    for v, w in pairs:
+        if v is None:
+            continue
+        num += v * w
+        den += w
+    return round(num / den, 4) if den else None
+
+
+def merge_records(records):
+    """base-id 가 같은 레코드들을 한 레코드로 완전 병합.
+
+    - count: applied/accepted 합산
+    - grades: best=min, worst=max, avg/median=applied 가중평균
+    - preferences: 정규화 대상(대학|전형) 기준 합산 → applied 내림차순 재정렬·재순위
+    matchedId/rate 는 설정하지 않음(호출 측이 병합 후 수행).
+    입력 순서를 보존한다.
+    """
+    groups = {}
+    order = []
+    for r in records:
+        bid = _base_id(r["id"])
+        if bid not in groups:
+            groups[bid] = []
+            order.append(bid)
+        groups[bid].append(r)
+
+    merged = []
+    for bid in order:
+        grp = groups[bid]
+        if len(grp) == 1:
+            r = dict(grp[0])
+            r["id"] = bid
+            merged.append(r)
+            continue
+        first = grp[0]
+        applied = sum(r["count"]["applied"] for r in grp)
+        accepted = sum(r["count"]["accepted"] for r in grp)
+        bests = [r["grades"]["best"] for r in grp if r["grades"]["best"] is not None]
+        worsts = [r["grades"]["worst"] for r in grp if r["grades"]["worst"] is not None]
+        avg = _weighted_avg([(r["grades"]["avg"], r["count"]["applied"]) for r in grp])
+        median = _weighted_avg([(r["grades"]["median"], r["count"]["applied"]) for r in grp])
+
+        agg = {}
+        porder = []
+        for r in grp:
+            for p in r["preferences"]:
+                k = normalize_university(p["university"]) + "|" + normalize_name(p["label"])
+                if k not in agg:
+                    agg[k] = {"university": p["university"], "label": p["label"],
+                              "applied": 0, "accepted": 0}
+                    porder.append(k)
+                agg[k]["applied"] += p["applied"]
+                agg[k]["accepted"] += p["accepted"]
+        prefs = [agg[k] for k in porder]
+        prefs.sort(key=lambda x: x["applied"], reverse=True)
+        for i, p in enumerate(prefs, start=1):
+            p["rank"] = i
+
+        merged.append({
+            "id": bid,
+            "sheet": first["sheet"],
+            "region": first["region"],
+            "university": first["university"],
+            "type": first["type"],
+            "name": first["name"],
+            "unit": first["unit"],
+            "count": {"applied": applied, "accepted": accepted},
+            "grades": {
+                "best": min(bests) if bests else None,
+                "avg": avg,
+                "median": median,
+                "worst": max(worsts) if worsts else None,
+            },
+            "preferences": prefs,
+        })
+    return merged

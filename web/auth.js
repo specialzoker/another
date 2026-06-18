@@ -40,6 +40,7 @@ window.Auth = (function(){
     var key = $('keyInput').value.trim();
     setErr('');
     if(!key){ setErr('키를 입력해주세요.'); return; }
+    var btn=$('gateBtn'); btn.disabled=true;
     try{
       setStatus('⏳ 확인 중...');
       var res = await fetch(EDGE_FN_URL, {
@@ -50,6 +51,7 @@ window.Auth = (function(){
       if(!res.ok){ setErr(data.error || '유효하지 않은 키입니다.'); setStatus(''); return; }
       reveal(data.school ? data.school.sch_name : '');
     }catch(e){ setErr('연결 오류: ' + e.message); setStatus(''); }
+    finally{ btn.disabled=false; }
   }
 
   async function doAdminLogin(){
@@ -57,6 +59,7 @@ window.Auth = (function(){
     var pw = $('adminPw').value;
     setErr('');
     if(!email || !pw){ setErr('이메일과 비밀번호를 입력해주세요.'); return; }
+    var btn=$('gateBtn'); btn.disabled=true;
     try{
       setStatus('⏳ 관리자 인증 중...');
       var res = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
@@ -68,6 +71,7 @@ window.Auth = (function(){
       _adminToken = authData.access_token;
       reveal('관리자');
     }catch(e){ setErr('연결 오류: ' + e.message); setStatus(''); }
+    finally{ btn.disabled=false; }
   }
 
   async function doResetPw(){

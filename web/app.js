@@ -92,7 +92,7 @@
       drill.scrollIntoView({behavior:'smooth'});
       drill.querySelector('#closeDrill').onclick=()=>drill.remove();
     },
-    state, loadData, indexFor,
+    state, loadData, indexFor, _started:false,
   };
 
   async function init(){

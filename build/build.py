@@ -71,6 +71,7 @@ def main():
                 "id": r["id"], "key": key, "region": r["region"],
                 "university": r["university"], "type": r["type"],
                 "name": r["name"], "unit": r["unit"],
+                "applied": r["count"]["applied"],
             })
         report["sheets"][key] = {
             "records": len(records), "skipped": skipped,

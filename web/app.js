@@ -48,7 +48,7 @@
       const hay=`${x.university} ${x.type} ${x.name} ${x.unit||''}`;
       return terms.every(t=>hay.includes(t));
     });
-    rows=rows.slice(0,200);
+    rows=rows.slice().sort((a,b)=>(b.applied||0)-(a.applied||0)).slice(0,200);
     document.getElementById('resultBody').innerHTML = rows.map(x=>
       `<tr class="clickable" data-id="${Render.esc(x.id)}">
         <td>${Render.esc(x.region)}</td>

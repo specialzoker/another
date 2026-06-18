@@ -103,5 +103,5 @@
     document.getElementById('reportBadge').textContent =
       `${indexFor(state.key).length}개 전형`;
   }
-  document.addEventListener('DOMContentLoaded', init);
+  window.App.start = init;
 })();

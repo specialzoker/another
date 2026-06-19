@@ -22,7 +22,7 @@ window.Render = (function(){
     return `<div class="card">
       <h2>${recordTitle(r)}</h2>
       <div class="kpis">
-        ${kpi('사례수', `${c.applied} <small style="font-size:13px;color:#64748b">[${c.accepted}]</small>`)}
+        ${kpi('사례수 [합격자수]', `${c.applied} <small style="font-size:13px;color:#64748b">[${c.accepted}]</small>`)}
         ${kpi('합격률', `${Math.round((r.rate||0)*100)}%`)}
         ${kpi('내신 최고', gr(g.best))}
         ${kpi('내신 평균', gr(g.avg))}
